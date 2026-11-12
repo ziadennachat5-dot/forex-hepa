@@ -790,12 +790,13 @@ button {
   transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
   cursor: pointer;
   text-decoration: none;
-  animation: ctaWhitePulse 3s infinite ease-in-out;
+  animation: ctaShakeAndPulse 3.8s infinite ease-in-out;
   overflow: hidden;
   user-select: none;
 }
 
 .btn-cta:hover {
+  animation-play-state: paused;
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 12px 34px rgba(255, 255, 255, 0.4), 0 4px 12px rgba(0,0,0,0.5);
   filter: brightness(1.05);
@@ -847,12 +848,40 @@ button {
   35%, 100% { transform: translateX(100%) rotate(30deg); }
 }
 
-@keyframes ctaWhitePulse {
+@keyframes ctaShakeAndPulse {
   0%, 100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
     box-shadow: 0 8px 24px rgba(255, 255, 255, 0.22), 0 2px 6px rgba(0, 0, 0, 0.4);
   }
-  50% {
+  25% {
+    transform: translate(0, 0) scale(1.02) rotate(0deg);
     box-shadow: 0 10px 32px rgba(255, 255, 255, 0.45), 0 0 16px rgba(255, 255, 255, 0.35);
+  }
+  40% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  /* Subtle periodic shake / wiggle */
+  48% {
+    transform: translate(-3px, -1px) rotate(-1.5deg);
+  }
+  52% {
+    transform: translate(3px, 1px) rotate(1.5deg);
+  }
+  56% {
+    transform: translate(-3px, 0) rotate(-1.2deg);
+  }
+  60% {
+    transform: translate(3px, 0) rotate(1deg);
+  }
+  64% {
+    transform: translate(-1.5px, 0) rotate(-0.5deg);
+  }
+  68% {
+    transform: translate(1px, 0) rotate(0.5deg);
+  }
+  72%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.22), 0 2px 6px rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -863,19 +892,19 @@ button {
 }
 
 .btn-cta--compact {
-  max-width: 210px;
+  max-width: 230px;
   min-height: 48px;
-  padding: 10px 18px;
-  font-size: 0.98rem;
+  padding: 9px 14px;
+  font-size: 0.88rem;
   background: #FFFFFF;
   color: #0A0A0A;
   box-shadow: 0 4px 18px rgba(255, 255, 255, 0.28);
-  animation: ctaWhitePulse 3s infinite ease-in-out;
+  animation: ctaShakeAndPulse 3.8s infinite ease-in-out;
 }
 
 .btn-cta--compact .btn-cta__icon {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
 }
 
 /* Trust Line Under CTA */

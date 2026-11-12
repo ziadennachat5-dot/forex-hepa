@@ -16,8 +16,8 @@
 
 ## 🔗 الروابط الرسمية المعتمدة (Official Links)
 
-- **رابط الانضمام الرئيسي (Telegram Group):** `https://t.me/+mGrv4sLYRjkwMmM0`
-- **رابط الدعم الفني (Telegram Support):** `https://t.me/forexhepa_support`
+- **رابط تيليغرام الرسمي والتواصل (Telegram Support & Group):** `https://t.me/forexhepa_support`
+- **نص زر التحويل (CTA Button Text):** `للتواصل معنا الآن اضغط هنا` (مع حركة اهتزاز تفاعلية خفيفة لجذب الانتباه)
 - **حساب إنستغرام المؤسس (Instagram):** `https://www.instagram.com/adamou__1/`
 - جميع الروابط تفتح في تبويب جديد (`target="_blank" rel="noopener noreferrer"`).
 
@@ -56,7 +56,7 @@
 ```javascript
 window.SITE_CONFIG = {
   // 1. الروابط الأساسية
-  telegramGroupUrl: "https://t.me/+mGrv4sLYRjkwMmM0",
+  telegramGroupUrl: "https://t.me/forexhepa_support",
   telegramSupportUrl: "https://t.me/forexhepa_support",
   instagramUrl: "https://www.instagram.com/adamou__1/",
 

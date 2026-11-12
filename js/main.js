@@ -17,7 +17,7 @@
   // 1. CONFIG & UTM QUERY PARAMETERS
   // --------------------------------------------------------------------------
   const config = window.SITE_CONFIG || {
-    telegramGroupUrl: "https://t.me/+mGrv4sLYRjkwMmM0",
+    telegramGroupUrl: "https://t.me/forexhepa_support",
     telegramSupportUrl: "https://t.me/forexhepa_support",
     instagramUrl: "https://www.instagram.com/adamou__1/",
     membersCount: "5,000+",

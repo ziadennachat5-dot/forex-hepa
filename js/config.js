@@ -10,8 +10,8 @@ window.SITE_CONFIG = {
   // ----------------------------------------------------------------------------
   // 1. CORE LINKS (روابط الانضمام والدعم)
   // ----------------------------------------------------------------------------
-  // Main Telegram Community link
-  telegramGroupUrl: "https://t.me/+mGrv4sLYRjkwMmM0",
+  // Official Telegram Support & Community link
+  telegramGroupUrl: "https://t.me/forexhepa_support",
 
   // Support Telegram link
   telegramSupportUrl: "https://t.me/forexhepa_support",
