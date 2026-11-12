@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 960" width="540" height="960">
+    <rect width="540" height="960" fill="#0C0C0C"/>
+    <rect x="1" y="1" width="538" height="958" rx="16" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+
+    <!-- Subtle chart curves in background -->
+    <path d="M 0 680 Q 140 600 270 480 T 540 280" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.2"/>
+
+    <!-- Top Badge -->
+    <rect x="30" y="40" width="110" height="36" rx="18" fill="rgba(255, 255, 255, 0.08)" stroke="rgba(255,255,255,0.18)" stroke-width="1.2"/>
+    <text x="85" y="64" fill="#FFFFFF" font-family="'Cairo', sans-serif" font-weight="700" font-size="14" text-anchor="middle">نصيحة ذهبية</text>
+
+    <!-- Pair Info -->
+    <rect x="30" y="90" width="140" height="40" rx="8" fill="#181818"/>
+    <text x="100" y="116" fill="#FFFFFF" font-family="'Cairo', sans-serif" font-weight="800" font-size="17" text-anchor="middle">RISK PLAN</text>
+
+    <!-- Candlestick representation in center -->
+    <g transform="translate(140, 260)">
+      <line x1="40" y1="120" x2="40" y2="280" stroke="#EF4444" stroke-width="2"/>
+      <rect x="32" y="150" width="16" height="90" rx="3" fill="#EF4444"/>
+
+      <line x1="80" y1="80" x2="80" y2="220" stroke="#10B981" stroke-width="2"/>
+      <rect x="72" y="110" width="16" height="80" rx="3" fill="#10B981"/>
+
+      <line x1="120" y1="100" x2="120" y2="200" stroke="#EF4444" stroke-width="2"/>
+      <rect x="112" y="120" width="16" height="50" rx="3" fill="#EF4444"/>
+
+      <line x1="160" y1="40" x2="160" y2="180" stroke="#10B981" stroke-width="2"/>
+      <rect x="152" y="60" width="16" height="90" rx="3" fill="#10B981"/>
+
+      <line x1="200" y1="20" x2="200" y2="140" stroke="#10B981" stroke-width="2"/>
+      <rect x="192" y="40" width="16" height="70" rx="3" fill="#10B981"/>
+    </g>
+
+    <!-- Center Play Icon: Solid White Circle with Black Arrow -->
+    <circle cx="270" cy="500" r="42" fill="#FFFFFF"/>
+    <polygon points="263,485 263,515 285,500" fill="#0A0A0A"/>
+
+    <!-- Bottom Info / Title Overlay -->
+    <rect x="20" y="720" width="500" height="200" rx="16" fill="rgba(16, 16, 16, 0.92)" stroke="rgba(255,255,255,0.08)"/>
+    
+    <text x="500" y="770" fill="#FFFFFF" font-family="'Cairo', sans-serif" font-weight="800" font-size="22" text-anchor="end">إدارة المخاطر وتجنب التسرع</text>
+    <text x="500" y="810" fill="#A3A3A3" font-family="'Cairo', sans-serif" font-weight="500" font-size="16" text-anchor="end">شرح مباشر ومبسط من داخل القناة</text>
+    
+    <!-- Pips Metric Chip in Red or Green -->
+    <rect x="40" y="840" width="120" height="34" rx="8" fill="rgba(255, 255, 255, 0.05)"/>
+    <text x="100" y="863" fill="#10B981" font-family="'Cairo', sans-serif" font-weight="700" font-size="15" text-anchor="middle">حماية الرأسمال</text>
+
+    <!-- Duration -->
+    <text x="490" y="863" fill="#737373" font-family="monospace" font-size="14" text-anchor="end">0:30</text>
+  </svg>

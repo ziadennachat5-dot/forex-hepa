@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 480" width="600" height="480">
+    <defs>
+      <linearGradient id="cardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#0E1626"/>
+        <stop offset="100%" stop-color="#080E1A"/>
+      </linearGradient>
+    </defs>
+    <rect width="600" height="480" rx="20" fill="url(#cardBg)" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+
+    <!-- Header bar mimicking Telegram Group -->
+    <rect x="0" y="0" width="600" height="70" rx="20" fill="#141E33"/>
+    
+    <!-- Telegram group badge -->
+    <circle cx="550" cy="35" r="20" fill="#0088CC"/>
+    <path transform="translate(537, 22) scale(1.1)" fill="#FFFFFF" d="M12 2L2 9l8 2 2 8 8-17-18 7z"/>
+    
+    <text x="515" y="32" fill="#FFFFFF" font-family="'Cairo', sans-serif" font-weight="700" font-size="17" text-anchor="end">Forex Hepa • مجتمع المتداولين</text>
+    <text x="515" y="52" fill="#00E676" font-family="'Cairo', sans-serif" font-weight="600" font-size="13" text-anchor="end">5,240 عضو • 412 متصل الآن</text>
+
+    <!-- Message Bubble -->
+    <g transform="translate(30, 95)">
+      <!-- Avatar -->
+      <circle cx="515" cy="30" r="22" fill="#2563EB"/>
+      <text x="515" y="37" fill="#FFFFFF" font-family="'Cairo', sans-serif" font-weight="700" font-size="16" text-anchor="middle">س</text>
+      
+      <!-- Bubble Background -->
+      <rect x="20" y="0" width="465" height="320" rx="16" fill="#182337" stroke="rgba(0, 230, 118, 0.15)"/>
+      
+      <!-- Author name & verified tag -->
+      <text x="465" y="35" fill="#38BDF8" font-family="'Cairo', sans-serif" font-weight="700" font-size="17" text-anchor="end">سفيان ت.</text>
+      <circle cx="478" cy="30" r="4" fill="#00E676"/>
+      
+      <!-- Reply quote if present -->
+      
+
+      <!-- Message Text -->
+      <text x="465" y="85" fill="#F1F5F9" font-family="'Cairo', sans-serif" font-weight="600" font-size="18" text-anchor="end">صراحة هادي أول مجموعة تيليغرام كنشوف فيها ناس معقولين.</text>
+      <text x="465" y="120" fill="#F1F5F9" font-family="'Cairo', sans-serif" font-weight="600" font-size="18" text-anchor="end">ما كاين لا وعود كاذبة لا والو، غير الخدمة النقية والتحليل.</text>
+      <text x="465" y="155" fill="#94A3B8" font-family="'Cairo', sans-serif" font-weight="500" font-size="15" text-anchor="end">الله يرحم الوالدين على هاد المبادرة المجانية.</text>
+      
+      <!-- Micro stats / badge -->
+      <rect x="40" y="215" width="200" height="36" rx="10" fill="rgba(0, 230, 118, 0.12)"/>
+      <text x="140" y="238" fill="#00E676" font-family="'Cairo', sans-serif" font-weight="700" font-size="14" text-anchor="middle">مصداقية وشفافية 100% ⭐</text>
+
+      <!-- Time and Checkmarks -->
+      <text x="50" y="305" fill="#64748B" font-family="monospace" font-size="13">11:20</text>
+      <text x="95" y="305" fill="#38BDF8" font-size="14">✓✓</text>
+    </g>
+
+    <!-- Bottom group footer -->
+    <rect x="20" y="435" width="560" height="30" rx="8" fill="rgba(255,255,255,0.02)"/>
+    <text x="300" y="455" fill="#64748B" font-family="'Cairo', sans-serif" font-size="12" text-anchor="middle">رسالة حقيقية من داخل مجموعة Forex Hepa العامة</text>
+  </svg>
