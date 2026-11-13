@@ -895,9 +895,72 @@
   }
 
   // --------------------------------------------------------------------------
-  // 10. INITIALIZE ON DOM READY
+  // 9. TELEGRAM APP DOWNLOAD LINKS (DEVICE DETECTION)
+  // --------------------------------------------------------------------------
+  function setupTelegramDownloadLinks() {
+    const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+    let downloadUrl = 'https://telegram.org/apps';
+
+    // iOS Detection: iPhone, iPad, iPod, or iPadOS reporting MacIntel with touch
+    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    // Android Detection
+    const isAndroid = /Android/i.test(ua);
+
+    if (isIOS) {
+      downloadUrl = 'https://apps.apple.com/app/telegram-messenger/id686449807';
+    } else if (isAndroid) {
+      downloadUrl = 'https://play.google.com/store/apps/details?id=org.telegram.messenger';
+    }
+
+    const links = document.querySelectorAll('.telegram-download-link');
+    links.forEach(link => {
+      link.setAttribute('href', downloadUrl);
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // 10. IN-APP BROWSER DETECTION (Instagram, FBAN, FBAV, TikTok, Snapchat)
+  // --------------------------------------------------------------------------
+  function setupInAppBrowserNotice() {
+    const inAppBar = document.getElementById('in-app-bar');
+    const closeBtn = document.getElementById('in-app-bar-close');
+    if (!inAppBar) return;
+
+    // Check if dismissed previously in this session
+    try {
+      if (sessionStorage.getItem('forex_hepa_inapp_dismissed') === '1') {
+        return;
+      }
+    } catch (e) {}
+
+    const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+    // Detect in-app browsers: Instagram, Facebook App (FBAN, FBAV), TikTok, Snapchat
+    const isInApp = /Instagram|FBAN|FBAV|Snapchat|TikTok/i.test(ua);
+
+    if (isInApp) {
+      inAppBar.removeAttribute('hidden');
+      inAppBar.classList.add('in-app-bar--visible');
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', function () {
+          inAppBar.style.display = 'none';
+          inAppBar.setAttribute('hidden', '');
+          try {
+            sessionStorage.setItem('forex_hepa_inapp_dismissed', '1');
+          } catch (e) {}
+        });
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // 11. INITIALIZE ON DOM READY
   // --------------------------------------------------------------------------
   function onReady() {
+    setupInAppBrowserNotice();
+    setupTelegramDownloadLinks();
     syncDomWithConfig();
     initHeroChartCanvas();
     initHeroLiveChart();

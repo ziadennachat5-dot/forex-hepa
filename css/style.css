@@ -225,6 +225,90 @@ button {
 }
 
 /* --------------------------------------------------------------------------
+   0. IN-APP BROWSER NOTICE (Instagram, Facebook, TikTok, Snapchat)
+   -------------------------------------------------------------------------- */
+.in-app-bar {
+  display: none;
+  background: #0E121B;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  color: #D1D5DB;
+  font-size: 0.78rem;
+  padding: 7px 0;
+  position: relative;
+  z-index: 150;
+}
+
+.in-app-bar[hidden] {
+  display: none !important;
+}
+
+.in-app-bar--visible {
+  display: block;
+}
+
+.in-app-bar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+.in-app-bar__content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  justify-content: center;
+}
+
+.in-app-bar__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #A3A3A3;
+  flex-shrink: 0;
+}
+
+.in-app-bar__text {
+  font-weight: 600;
+  color: #F3F4F6;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.in-app-bar__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #9CA3AF;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.in-app-bar__close:hover,
+.in-app-bar__close:focus-visible {
+  color: #FFFFFF;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 360px) {
+  .in-app-bar__text {
+    font-size: 0.73rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
    4. TOP BAR (Logo + Small White CTA Button, No Distracting Menu)
    -------------------------------------------------------------------------- */
 .top-bar {
@@ -922,6 +1006,36 @@ button {
 
 .trust-line .separator {
   color: #525252;
+}
+
+/* Telegram App Required Note */
+.telegram-app-note {
+  font-size: 0.8rem;
+  color: #8E8E93;
+  margin-top: 10px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.telegram-app-note a,
+.telegram-app-note .telegram-download-link {
+  color: #FFFFFF;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 600;
+  transition: opacity var(--transition-fast);
+}
+
+.telegram-app-note a:hover,
+.telegram-app-note .telegram-download-link:hover {
+  opacity: 0.8;
+}
+
+.telegram-app-note--faq {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  text-align: right;
+  color: #8E8E93;
 }
 
 /* --------------------------------------------------------------------------
