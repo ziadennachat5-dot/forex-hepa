@@ -2194,6 +2194,24 @@ video::-webkit-media-controls-fullscreen-button {
   text-align: center;
 }
 
+.broker-card--hero {
+  margin-top: 22px;
+  max-width: 420px;
+  padding: 20px 18px;
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .hero-cta {
+    align-items: flex-start;
+  }
+  .broker-card--hero {
+    margin-top: 24px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
 .broker-card__title {
   font-size: 1.08rem;
   font-weight: 800;
