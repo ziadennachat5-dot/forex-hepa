@@ -8,13 +8,28 @@
 
 window.SITE_CONFIG = {
   // ----------------------------------------------------------------------------
-  // 1. CORE LINKS (روابط الانضمام والدعم)
+  // 1. CORE CONTACT CONSTANTS & DEEP LINKS
   // ----------------------------------------------------------------------------
-  // Official Telegram Support & Community link
-  telegramGroupUrl: "https://t.me/forexhepa_support",
+  // Telegram Group Invite code (from https://t.me/+mGrv4sLYRjkwMmM0)
+  telegramGroupInvite: "mGrv4sLYRjkwMmM0",
 
-  // Support Telegram link
+  // Telegram Support Username (from https://t.me/forexhepa_support)
+  telegramSupportUsername: "forexhepa_support",
+
+  // Fallback URLs
+  telegramGroupUrl: "https://t.me/+mGrv4sLYRjkwMmM0",
   telegramSupportUrl: "https://t.me/forexhepa_support",
+
+  // WhatsApp secondary contact (Support area only)
+  whatsappNumber: "212727846454", // international format, no +, spaces or dashes
+  whatsappMessage: "سلام، بغيت معلومات على مجموعة Forex Hepa",
+
+  // Official App Store links
+  storeLinks: {
+    ios: "https://apps.apple.com/app/telegram-messenger/id686449807",
+    android: "https://play.google.com/store/apps/details?id=org.telegram.messenger",
+    desktop: "https://telegram.org/apps"
+  },
 
   // Founder Instagram profile link
   instagramUrl: "https://www.instagram.com/adamou__1/",

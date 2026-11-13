@@ -16,11 +16,13 @@
 
 ## 🔗 الروابط الرسمية المعتمدة (Official Links)
 
-- **رابط تيليغرام الرسمي والتواصل (Telegram Support & Group):** `https://t.me/forexhepa_support`
-- **نص زر التحويل (CTA Button Text):** `للتواصل معنا الآن اضغط هنا` (مع حركة اهتزاز تفاعلية خفيفة لجذب الانتباه)
+- **رابط الانضمام للمجموعة (Telegram Group):** `https://t.me/+mGrv4sLYRjkwMmM0` (Deep Link: `tg://join?invite=mGrv4sLYRjkwMmM0`)
+- **رابط الدعم الفني (Telegram Support):** `https://t.me/forexhepa_support` (Deep Link: `tg://resolve?domain=forexhepa_support`)
+- **نص زر التحويل الرئيسي (Main CTA):** `انضم للمجموعة مجانا`
+- **قناة واتساب الثانوية (Secondary WhatsApp Contact):** `https://wa.me/212727846454` (زر مفرغ أبيض أنيق في قسم الدعم والفوتر فقط مع تتبع حدث Meta Pixel `Contact`).
+- **فحص ذكي لتثبيت تيليغرام (Page Visibility API):** محاولة فتح التطبيق بالرابط العميق على الهواتف، وإذا لم يفتح خلال 1500ms يظهر تنبيه وزر لتحميل التطبيق مع فتح المتجر تلقائياً بعد ثانية إضافية إذا لم يتفاعل الزائر.
 - **حساب إنستغرام المؤسس (Instagram):** `https://www.instagram.com/adamou__1/`
-- جميع الروابط تفتح في تبويب جديد (`target="_blank" rel="noopener noreferrer"`).
-- **توافق وسلاسة متصفحات التطبيقات (In-App Browsers):** كشف تلقائي لمتصفحات إنستغرام وفيسبوك وتيك توك وسناب شات مع شريط علوي قابل للإغلاق لتسهيل الفتح في المتصفح الخارجي.
+- **توافق وسلاسة متصفحات التطبيقات (In-App Browsers):** كشف تلقائي لمتصفحات إنستغرام وفيسبوك وتيك توك وسناب شات وتخطي الروابط العميقة لفتح الرابط المباشر مع شريط علوي قابل للإغلاق لتسهيل الفتح في المتصفح الخارجي.
 - **توجيه ذكي لتحميل تيليغرام (Device-Aware Download):** فحص نوع الجهاز وتوجيه مستخدمي iPhone/iPad لمتجر App Store، ومستخدمي Android لمتجر Google Play، وسطح المكتب لـ telegram.org/apps.
 
 ---

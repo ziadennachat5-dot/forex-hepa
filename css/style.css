@@ -1039,6 +1039,153 @@ button {
 }
 
 /* --------------------------------------------------------------------------
+   SECONDARY WHATSAPP CONTACT BUTTON (Support Area Only: FAQ & Footer)
+   -------------------------------------------------------------------------- */
+.btn-whatsapp-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--radius-pill);
+  padding: 8px 18px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-whatsapp-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #FFFFFF;
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.btn-whatsapp-secondary:active {
+  transform: translateY(0);
+}
+
+.btn-whatsapp-secondary svg {
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
+.faq-support-actions {
+  margin-top: 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* --------------------------------------------------------------------------
+   TELEGRAM NOT INSTALLED PROMPT & STORE BUTTON
+   -------------------------------------------------------------------------- */
+.telegram-install-prompt {
+  margin-top: 14px;
+  margin-bottom: 8px;
+  background: #11141E;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--radius-card);
+  padding: 14px 16px;
+  text-align: center;
+  position: relative;
+  animation: promptFadeIn 0.25s ease-out;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  z-index: 20;
+}
+
+@keyframes promptFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.telegram-install-prompt__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-store-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #FFFFFF;
+  color: #0A0A0A;
+  font-weight: 800;
+  font-size: 0.92rem;
+  padding: 9px 24px;
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.3);
+  transition: transform var(--transition-fast), filter var(--transition-fast);
+  cursor: pointer;
+}
+
+.btn-store-download:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-store-download svg {
+  stroke: currentColor;
+}
+
+.telegram-install-msg {
+  font-size: 0.82rem;
+  color: #E2E8F0;
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 380px;
+}
+
+.telegram-install-close {
+  position: absolute;
+  top: 8px;
+  left: 8px; /* RTL placement */
+  background: transparent;
+  border: none;
+  color: #9CA3AF;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.telegram-install-close:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Fixed prompt anchored above sticky mobile bar */
+.telegram-install-prompt--sticky {
+  position: fixed;
+  bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+  left: 12px;
+  right: 12px;
+  margin: 0;
+  z-index: 1000;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: rgba(14, 18, 27, 0.98);
+}
+
+/* --------------------------------------------------------------------------
    7. MARKET TICKER STRIP (Generic continuous scrolling chips)
    -------------------------------------------------------------------------- */
 .market-ticker {

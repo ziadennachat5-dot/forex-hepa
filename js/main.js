@@ -14,16 +14,60 @@
   'use strict';
 
   // --------------------------------------------------------------------------
-  // 1. CONFIG & UTM QUERY PARAMETERS
+  // 1. CONFIG & CONTACT CONSTANTS
   // --------------------------------------------------------------------------
+  const TELEGRAM_GROUP_INVITE = (window.SITE_CONFIG && window.SITE_CONFIG.telegramGroupInvite) || "mGrv4sLYRjkwMmM0";
+  const TELEGRAM_SUPPORT_USERNAME = (window.SITE_CONFIG && window.SITE_CONFIG.telegramSupportUsername) || "forexhepa_support";
+  const WHATSAPP_NUMBER = (window.SITE_CONFIG && window.SITE_CONFIG.whatsappNumber) || "212727846454";
+  const WHATSAPP_MESSAGE = (window.SITE_CONFIG && window.SITE_CONFIG.whatsappMessage) || "سلام، بغيت معلومات على مجموعة Forex Hepa";
+
+  const STORE_LINKS = (window.SITE_CONFIG && window.SITE_CONFIG.storeLinks) || {
+    ios: "https://apps.apple.com/app/telegram-messenger/id686449807",
+    android: "https://play.google.com/store/apps/details?id=org.telegram.messenger",
+    desktop: "https://telegram.org/apps"
+  };
+
   const config = window.SITE_CONFIG || {
-    telegramGroupUrl: "https://t.me/forexhepa_support",
-    telegramSupportUrl: "https://t.me/forexhepa_support",
+    telegramGroupInvite: TELEGRAM_GROUP_INVITE,
+    telegramSupportUsername: TELEGRAM_SUPPORT_USERNAME,
+    telegramGroupUrl: "https://t.me/+" + TELEGRAM_GROUP_INVITE,
+    telegramSupportUrl: "https://t.me/" + TELEGRAM_SUPPORT_USERNAME,
+    whatsappNumber: WHATSAPP_NUMBER,
+    whatsappMessage: WHATSAPP_MESSAGE,
+    storeLinks: STORE_LINKS,
     instagramUrl: "https://www.instagram.com/adamou__1/",
     membersCount: "5,000+",
     onlineMembers: "438",
     screenshots: []
   };
+
+  /**
+   * Device and in-app browser detection
+   */
+  function isMobileDevice() {
+    const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+    return /Android|iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+
+  function isInAppBrowser() {
+    const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+    return /Instagram|FBAN|FBAV|Snapchat|TikTok/i.test(ua);
+  }
+
+  function getStoreUrl() {
+    const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isAndroid = /Android/i.test(ua);
+    if (isIOS) return (config.storeLinks && config.storeLinks.ios) || STORE_LINKS.ios;
+    if (isAndroid) return (config.storeLinks && config.storeLinks.android) || STORE_LINKS.android;
+    return (config.storeLinks && config.storeLinks.desktop) || STORE_LINKS.desktop;
+  }
+
+  function getWhatsAppUrl() {
+    const cleanNum = (config.whatsappNumber || WHATSAPP_NUMBER).replace(/[^0-9]/g, '');
+    const encodedMsg = encodeURIComponent(config.whatsappMessage || WHATSAPP_MESSAGE);
+    return `https://wa.me/${cleanNum}?text=${encodedMsg}`;
+  }
 
   /**
    * Extract incoming UTM and tracking query parameters
@@ -57,7 +101,7 @@
   } catch (e) {}
 
   // --------------------------------------------------------------------------
-  // 2. AD TRACKING HANDLER (META PIXEL & GOOGLE TAG)
+  // 2. AD TRACKING HANDLERS (META PIXEL & GOOGLE TAG)
   // --------------------------------------------------------------------------
   function trackJoinLead(locationName) {
     const storedUtm = (() => {
@@ -102,8 +146,266 @@
     }
   }
 
+  function trackWhatsAppContact() {
+    const storedUtm = (() => {
+      try {
+        return JSON.parse(sessionStorage.getItem('forex_hepa_utm') || '{}');
+      } catch (e) {
+        return {};
+      }
+    })();
+
+    const eventPayload = {
+      content_name: 'Forex Hepa WhatsApp Contact',
+      content_category: 'Contact',
+      contact_channel: 'WhatsApp',
+      source_platform: 'Meta Ads',
+      ...storedUtm,
+      ...queryParams
+    };
+
+    // 1. Meta Pixel Contact Event
+    if (typeof window.fbq === 'function') {
+      try {
+        window.fbq('track', 'Contact', eventPayload);
+        console.log('[Tracking] Meta Pixel Contact event fired');
+      } catch (err) {
+        console.warn('[Tracking] Meta Pixel error:', err);
+      }
+    }
+
+    // 2. Google Analytics Event
+    if (typeof window.gtag === 'function') {
+      try {
+        window.gtag('event', 'contact', {
+          event_category: 'Contact',
+          event_label: 'WhatsApp',
+          value: 1
+        });
+        console.log('[Tracking] Google Tag Contact event fired');
+      } catch (err) {
+        console.warn('[Tracking] Google Tag error:', err);
+      }
+    }
+  }
+
   // --------------------------------------------------------------------------
-  // 3. SYNC CONFIG WITH DOM ELEMENTS
+  // 3. TELEGRAM MOBILE DEEP LINKING & FALLBACK HANDLER
+  // --------------------------------------------------------------------------
+  let isTelegramCheckInProgress = false;
+  let checkTimeoutId = null;
+  let autoOpenTimeoutId = null;
+  let visibilityListener = null;
+  let pageHideListener = null;
+  let blurListener = null;
+  let activePromptElement = null;
+  let hasUserInteracted = false;
+
+  function cleanupTelegramCheck() {
+    if (checkTimeoutId) {
+      clearTimeout(checkTimeoutId);
+      checkTimeoutId = null;
+    }
+    if (autoOpenTimeoutId) {
+      clearTimeout(autoOpenTimeoutId);
+      autoOpenTimeoutId = null;
+    }
+    if (visibilityListener) {
+      document.removeEventListener('visibilitychange', visibilityListener);
+      visibilityListener = null;
+    }
+    if (pageHideListener) {
+      window.removeEventListener('pagehide', pageHideListener);
+      pageHideListener = null;
+    }
+    if (blurListener) {
+      window.removeEventListener('blur', blurListener);
+      blurListener = null;
+    }
+    isTelegramCheckInProgress = false;
+  }
+
+  function removeActivePrompt() {
+    if (activePromptElement && activePromptElement.parentNode) {
+      activePromptElement.parentNode.removeChild(activePromptElement);
+    }
+    activePromptElement = null;
+  }
+
+  function renderTelegramInstallPrompt(button, storeUrl) {
+    removeActivePrompt();
+
+    const prompt = document.createElement('div');
+    const isSticky = !!button.closest('.sticky-cta-bar');
+    prompt.className = 'telegram-install-prompt' + (isSticky ? ' telegram-install-prompt--sticky' : '');
+    prompt.setAttribute('role', 'alert');
+    prompt.innerHTML = `
+      <div class="telegram-install-prompt__inner">
+        <a href="${storeUrl}" target="_blank" rel="noopener noreferrer" class="btn-store-download">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span>حمّل تيليغرام</span>
+        </a>
+        <p class="telegram-install-msg">بعد ما تحمّل تيليغرام، رجع لهاد الصفحة وكليكي على الزر مرة أخرى.</p>
+        <button type="button" class="telegram-install-close" aria-label="إغلاق التنبيه">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    `;
+
+    if (isSticky) {
+      document.body.appendChild(prompt);
+    } else {
+      button.insertAdjacentElement('afterend', prompt);
+    }
+
+    activePromptElement = prompt;
+
+    // Interaction handling to cancel auto-open
+    const markInteracted = () => {
+      hasUserInteracted = true;
+      if (autoOpenTimeoutId) {
+        clearTimeout(autoOpenTimeoutId);
+        autoOpenTimeoutId = null;
+      }
+    };
+
+    const storeBtn = prompt.querySelector('.btn-store-download');
+    if (storeBtn) {
+      storeBtn.addEventListener('click', markInteracted);
+    }
+
+    const closeBtn = prompt.querySelector('.telegram-install-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        markInteracted();
+        removeActivePrompt();
+      });
+    }
+
+    prompt.addEventListener('pointerdown', markInteracted);
+    window.addEventListener('scroll', markInteracted, { passive: true, once: true });
+    window.addEventListener('pointerdown', function onPageTap(ev) {
+      if (!prompt.contains(ev.target) && ev.target !== button) {
+        markInteracted();
+      }
+    }, { once: true });
+  }
+
+  function handleTelegramClick(e, button) {
+    const loc = button.getAttribute('data-cta-location') || 'unknown';
+    const type = button.getAttribute('data-cta-type') || (loc.includes('support') ? 'support' : 'group');
+    const fallbackUrl = (type === 'support')
+      ? (config.telegramSupportUrl || `https://t.me/${TELEGRAM_SUPPORT_USERNAME}`)
+      : (config.telegramGroupUrl || `https://t.me/+${TELEGRAM_GROUP_INVITE}`);
+
+    // Always fire Lead tracking event first
+    trackJoinLead(loc);
+
+    // On Desktop: no tg:// logic, open normal https://t.me link in new tab
+    if (!isMobileDevice()) {
+      return; // allow default link behavior (opens target="_blank")
+    }
+
+    // Inside In-App Browser (Instagram, FBAN, FBAV, TikTok, Snapchat):
+    // Skip tg:// attempt and open plain https://t.me link, show dismissible top bar
+    if (isInAppBrowser()) {
+      showInAppBrowserNotice();
+      return; // allow default link behavior (opens target="_blank")
+    }
+
+    // Regular Mobile Browser (iOS Safari, Android Chrome, etc.): Enhance with deep link
+    e.preventDefault();
+
+    // Ignore taps while check is in progress
+    if (isTelegramCheckInProgress) {
+      return;
+    }
+
+    cleanupTelegramCheck();
+    removeActivePrompt();
+
+    isTelegramCheckInProgress = true;
+    hasUserInteracted = false;
+
+    const groupInvite = config.telegramGroupInvite || TELEGRAM_GROUP_INVITE;
+    const supportUsername = config.telegramSupportUsername || TELEGRAM_SUPPORT_USERNAME;
+    const deepLink = (type === 'support')
+      ? `tg://resolve?domain=${supportUsername}`
+      : `tg://join?invite=${groupInvite}`;
+
+    const storeUrl = getStoreUrl();
+    let appOpened = false;
+
+    function handleAppDetected() {
+      appOpened = true;
+      cleanupTelegramCheck();
+      removeActivePrompt();
+    }
+
+    visibilityListener = function () {
+      if (document.hidden) {
+        handleAppDetected();
+      }
+    };
+    pageHideListener = function () {
+      handleAppDetected();
+    };
+    blurListener = function () {
+      handleAppDetected();
+    };
+
+    document.addEventListener('visibilitychange', visibilityListener);
+    window.addEventListener('pagehide', pageHideListener);
+    window.addEventListener('blur', blurListener);
+
+    // Set window.location to deep link
+    window.location.href = deepLink;
+
+    // Check after 1500 ms with Page Visibility API
+    checkTimeoutId = setTimeout(() => {
+      // If app opened or page hidden, do nothing
+      if (appOpened || document.hidden) {
+        cleanupTelegramCheck();
+        return;
+      }
+
+      // Cleanup visibility listeners
+      if (visibilityListener) {
+        document.removeEventListener('visibilitychange', visibilityListener);
+        visibilityListener = null;
+      }
+      if (pageHideListener) {
+        window.removeEventListener('pagehide', pageHideListener);
+        pageHideListener = null;
+      }
+      if (blurListener) {
+        window.removeEventListener('blur', blurListener);
+        blurListener = null;
+      }
+      isTelegramCheckInProgress = false;
+
+      // Show message and store button under tapped button
+      renderTelegramInstallPrompt(button, storeUrl);
+
+      // Auto-open store after 1 more second only if person did not tap anything
+      autoOpenTimeoutId = setTimeout(() => {
+        if (!hasUserInteracted && !document.hidden && activePromptElement) {
+          window.location.href = storeUrl;
+        }
+      }, 1000);
+    }, 1500);
+  }
+
+  // --------------------------------------------------------------------------
+  // 4. SYNC CONFIG WITH DOM ELEMENTS
   // --------------------------------------------------------------------------
   function syncDomWithConfig() {
     // Member counts
@@ -127,19 +429,21 @@
       heroOnlineCount.textContent = config.onlineMembers;
     }
 
-    // All Join CTA links
+    // All Telegram CTA links (Group & Support)
     const ctaButtons = document.querySelectorAll('a[data-cta-location]');
     ctaButtons.forEach(btn => {
-      if (config.telegramGroupUrl) {
-        btn.setAttribute('href', config.telegramGroupUrl);
-        btn.setAttribute('target', '_blank');
-        btn.setAttribute('rel', 'noopener noreferrer');
-      }
+      const loc = btn.getAttribute('data-cta-location') || 'unknown';
+      const type = btn.getAttribute('data-cta-type') || (loc.includes('support') ? 'support' : 'group');
+      const fallbackUrl = (type === 'support')
+        ? (config.telegramSupportUrl || `https://t.me/${TELEGRAM_SUPPORT_USERNAME}`)
+        : (config.telegramGroupUrl || `https://t.me/+${TELEGRAM_GROUP_INVITE}`);
 
-      // Attach Lead Tracking Click
-      btn.addEventListener('click', function () {
-        const loc = btn.getAttribute('data-cta-location') || 'unknown';
-        trackJoinLead(loc);
+      btn.setAttribute('href', fallbackUrl);
+      btn.setAttribute('target', '_blank');
+      btn.setAttribute('rel', 'noopener noreferrer');
+
+      btn.addEventListener('click', function (e) {
+        handleTelegramClick(e, btn);
       });
     });
 
@@ -152,6 +456,18 @@
       if (link && config.telegramSupportUrl) {
         link.setAttribute('href', config.telegramSupportUrl);
       }
+    });
+
+    // Secondary WhatsApp buttons (Support area only)
+    const waButtons = document.querySelectorAll('[data-whatsapp-btn]');
+    const waUrl = getWhatsAppUrl();
+    waButtons.forEach(btn => {
+      btn.setAttribute('href', waUrl);
+      btn.setAttribute('target', '_blank');
+      btn.setAttribute('rel', 'noopener noreferrer');
+      btn.addEventListener('click', function () {
+        trackWhatsAppContact();
+      });
     });
 
     // Instagram link
@@ -898,20 +1214,7 @@
   // 9. TELEGRAM APP DOWNLOAD LINKS (DEVICE DETECTION)
   // --------------------------------------------------------------------------
   function setupTelegramDownloadLinks() {
-    const ua = navigator.userAgent || navigator.vendor || window.opera || '';
-    let downloadUrl = 'https://telegram.org/apps';
-
-    // iOS Detection: iPhone, iPad, iPod, or iPadOS reporting MacIntel with touch
-    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    // Android Detection
-    const isAndroid = /Android/i.test(ua);
-
-    if (isIOS) {
-      downloadUrl = 'https://apps.apple.com/app/telegram-messenger/id686449807';
-    } else if (isAndroid) {
-      downloadUrl = 'https://play.google.com/store/apps/details?id=org.telegram.messenger';
-    }
-
+    const downloadUrl = getStoreUrl();
     const links = document.querySelectorAll('.telegram-download-link');
     links.forEach(link => {
       link.setAttribute('href', downloadUrl);
@@ -923,35 +1226,35 @@
   // --------------------------------------------------------------------------
   // 10. IN-APP BROWSER DETECTION (Instagram, FBAN, FBAV, TikTok, Snapchat)
   // --------------------------------------------------------------------------
-  function setupInAppBrowserNotice() {
+  function showInAppBrowserNotice() {
     const inAppBar = document.getElementById('in-app-bar');
-    const closeBtn = document.getElementById('in-app-bar-close');
     if (!inAppBar) return;
-
-    // Check if dismissed previously in this session
     try {
       if (sessionStorage.getItem('forex_hepa_inapp_dismissed') === '1') {
         return;
       }
     } catch (e) {}
+    inAppBar.removeAttribute('hidden');
+    inAppBar.classList.add('in-app-bar--visible');
+  }
 
-    const ua = navigator.userAgent || navigator.vendor || window.opera || '';
-    // Detect in-app browsers: Instagram, Facebook App (FBAN, FBAV), TikTok, Snapchat
-    const isInApp = /Instagram|FBAN|FBAV|Snapchat|TikTok/i.test(ua);
+  function setupInAppBrowserNotice() {
+    const inAppBar = document.getElementById('in-app-bar');
+    const closeBtn = document.getElementById('in-app-bar-close');
+    if (!inAppBar) return;
 
-    if (isInApp) {
-      inAppBar.removeAttribute('hidden');
-      inAppBar.classList.add('in-app-bar--visible');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        inAppBar.style.display = 'none';
+        inAppBar.setAttribute('hidden', '');
+        try {
+          sessionStorage.setItem('forex_hepa_inapp_dismissed', '1');
+        } catch (e) {}
+      });
+    }
 
-      if (closeBtn) {
-        closeBtn.addEventListener('click', function () {
-          inAppBar.style.display = 'none';
-          inAppBar.setAttribute('hidden', '');
-          try {
-            sessionStorage.setItem('forex_hepa_inapp_dismissed', '1');
-          } catch (e) {}
-        });
-      }
+    if (isInAppBrowser()) {
+      showInAppBrowserNotice();
     }
   }
 
