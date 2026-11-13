@@ -2175,6 +2175,86 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 /* --------------------------------------------------------------------------
+   13.5. AFFILIATE BROKER SECTION (Secondary Low-Key Card)
+   -------------------------------------------------------------------------- */
+.broker-section {
+  background: #080808;
+  padding-top: 40px;
+  padding-bottom: 24px;
+}
+
+.broker-card {
+  background: #111111;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-card);
+  padding: 24px 20px;
+  max-width: 520px;
+  margin: 0 auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+.broker-card__title {
+  font-size: 1.08rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-bottom: 12px;
+}
+
+.broker-card__action {
+  margin-bottom: 12px;
+}
+
+.btn-broker-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--radius-pill);
+  padding: 9px 20px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.btn-broker-outline:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #FFFFFF;
+  color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.btn-broker-outline:active {
+  transform: translateY(0);
+}
+
+.btn-broker-outline svg {
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
+.broker-disclaimers {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.broker-note,
+.broker-risk {
+  font-size: 0.76rem;
+  color: #8E8E93;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
    14. FAQ ACCORDION
    -------------------------------------------------------------------------- */
 .faq-section {

@@ -34,6 +34,9 @@ window.SITE_CONFIG = {
   // Founder Instagram profile link
   instagramUrl: "https://www.instagram.com/adamou__1/",
 
+  // Broker Affiliate URL (Secondary low-key section)
+  brokerAffiliateUrl: "https://one.exnesstrack.net/boarding/sign-up/a/g8um96s2qn?lng=fr",
+
   // ----------------------------------------------------------------------------
   // 2. SOCIAL PROOF & STATS (أرقام وإحصائيات المجتمع)
   // ----------------------------------------------------------------------------

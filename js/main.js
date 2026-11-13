@@ -20,6 +20,7 @@
   const TELEGRAM_SUPPORT_USERNAME = (window.SITE_CONFIG && window.SITE_CONFIG.telegramSupportUsername) || "forexhepa_support";
   const WHATSAPP_NUMBER = (window.SITE_CONFIG && window.SITE_CONFIG.whatsappNumber) || "212727846454";
   const WHATSAPP_MESSAGE = (window.SITE_CONFIG && window.SITE_CONFIG.whatsappMessage) || "سلام، بغيت معلومات على مجموعة Forex Hepa";
+  const BROKER_AFFILIATE_URL = (window.SITE_CONFIG && window.SITE_CONFIG.brokerAffiliateUrl) || "https://one.exnesstrack.net/boarding/sign-up/a/g8um96s2qn?lng=fr";
 
   const STORE_LINKS = (window.SITE_CONFIG && window.SITE_CONFIG.storeLinks) || {
     ios: "https://apps.apple.com/app/telegram-messenger/id686449807",
@@ -34,6 +35,7 @@
     telegramSupportUrl: "https://t.me/" + TELEGRAM_SUPPORT_USERNAME,
     whatsappNumber: WHATSAPP_NUMBER,
     whatsappMessage: WHATSAPP_MESSAGE,
+    brokerAffiliateUrl: BROKER_AFFILIATE_URL,
     storeLinks: STORE_LINKS,
     instagramUrl: "https://www.instagram.com/adamou__1/",
     membersCount: "5,000+",
@@ -192,6 +194,49 @@
           value: 1
         });
         console.log('[Tracking] Google Tag Contact event fired');
+      } catch (err) {
+        console.warn('[Tracking] Google Tag error:', err);
+      }
+    }
+  }
+
+  function trackBrokerClick(locationName) {
+    const storedUtm = (() => {
+      try {
+        return JSON.parse(sessionStorage.getItem('forex_hepa_utm') || '{}');
+      } catch (e) {
+        return {};
+      }
+    })();
+
+    const eventPayload = {
+      content_name: 'Forex Hepa Broker Affiliate Click',
+      content_category: 'Broker Affiliate',
+      button_location: locationName || 'broker_card',
+      source_platform: 'Meta Ads',
+      ...storedUtm,
+      ...queryParams
+    };
+
+    // 1. Meta Pixel Custom Event "BrokerClick" (separate from "Lead")
+    if (typeof window.fbq === 'function') {
+      try {
+        window.fbq('trackCustom', 'BrokerClick', eventPayload);
+        console.log('[Tracking] Meta Pixel BrokerClick custom event fired from:', locationName);
+      } catch (err) {
+        console.warn('[Tracking] Meta Pixel BrokerClick error:', err);
+      }
+    }
+
+    // 2. Google Analytics Event
+    if (typeof window.gtag === 'function') {
+      try {
+        window.gtag('event', 'broker_click', {
+          event_category: 'Affiliate',
+          event_label: locationName || 'broker_card',
+          value: 1
+        });
+        console.log('[Tracking] Google Tag BrokerClick event fired from:', locationName);
       } catch (err) {
         console.warn('[Tracking] Google Tag error:', err);
       }
@@ -504,6 +549,19 @@
     if (igLink && config.instagramUrl) {
       igLink.setAttribute('href', config.instagramUrl);
     }
+
+    // Broker affiliate links (card button & footer link)
+    const brokerLinks = document.querySelectorAll('[data-track="broker"]');
+    const brokerUrl = config.brokerAffiliateUrl || BROKER_AFFILIATE_URL;
+    brokerLinks.forEach(link => {
+      link.setAttribute('href', brokerUrl);
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'sponsored noopener noreferrer');
+      link.addEventListener('click', function () {
+        const loc = link.getAttribute('data-broker-location') || link.id || 'broker_card';
+        trackBrokerClick(loc);
+      });
+    });
   }
 
   // --------------------------------------------------------------------------
