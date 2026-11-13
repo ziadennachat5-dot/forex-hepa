@@ -42,11 +42,23 @@
   };
 
   /**
-   * Device and in-app browser detection
+   * Device and platform detection
    */
-  function isMobileDevice() {
+  function isIOS() {
     const ua = navigator.userAgent || navigator.vendor || window.opera || '';
-    return /Android|iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const platform = navigator.platform || '';
+    const isAppleDevice = /iPad|iPhone|iPod/i.test(ua);
+    const isIPadOS = (/Macintosh/i.test(ua) || platform === 'MacIntel') && (navigator.maxTouchPoints > 1);
+    return isAppleDevice || isIPadOS;
+  }
+
+  function isAndroid() {
+    const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+    return /Android/i.test(ua);
+  }
+
+  function isMobileDevice() {
+    return isIOS() || isAndroid();
   }
 
   function isInAppBrowser() {
@@ -55,11 +67,8 @@
   }
 
   function getStoreUrl() {
-    const ua = navigator.userAgent || navigator.vendor || window.opera || '';
-    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    const isAndroid = /Android/i.test(ua);
-    if (isIOS) return (config.storeLinks && config.storeLinks.ios) || STORE_LINKS.ios;
-    if (isAndroid) return (config.storeLinks && config.storeLinks.android) || STORE_LINKS.android;
+    if (isIOS()) return (config.storeLinks && config.storeLinks.ios) || STORE_LINKS.ios;
+    if (isAndroid()) return (config.storeLinks && config.storeLinks.android) || STORE_LINKS.android;
     return (config.storeLinks && config.storeLinks.desktop) || STORE_LINKS.desktop;
   }
 
@@ -301,27 +310,42 @@
 
   function handleTelegramClick(e, button) {
     const loc = button.getAttribute('data-cta-location') || 'unknown';
-    const type = button.getAttribute('data-cta-type') || (loc.includes('support') ? 'support' : 'group');
+    const explicitType = button.getAttribute('data-cta-type');
+    const href = button.getAttribute('href') || '';
+    const type = explicitType || (
+      (href.includes('support') || href.includes(TELEGRAM_SUPPORT_USERNAME)) ? 'support' :
+      (loc.includes('support') ? 'support' : 'group')
+    );
     const fallbackUrl = (type === 'support')
       ? (config.telegramSupportUrl || `https://t.me/${TELEGRAM_SUPPORT_USERNAME}`)
       : (config.telegramGroupUrl || `https://t.me/+${TELEGRAM_GROUP_INVITE}`);
 
-    // Always fire Lead tracking event first
+    // Ensure the link href is always set to the clean fallback link
+    button.setAttribute('href', fallbackUrl);
+
+    // Always fire Lead tracking event first (Meta Pixel + Google Tag)
     trackJoinLead(loc);
 
-    // On Desktop: no tg:// logic, open normal https://t.me link in new tab
-    if (!isMobileDevice()) {
-      return; // allow default link behavior (opens target="_blank")
+    // 1) iOS Fix: On iOS (iPhone/iPad/iPod, including iPadOS reporting as Macintosh with touch),
+    // do NOT use tg:// at all. The Telegram buttons must be plain links to https://t.me/...
+    // opened normally with no preventDefault and no setTimeout redirect.
+    if (isIOS()) {
+      return; // Allow native navigation to plain fallbackUrl (0 tg:// calls)
+    }
+
+    // On Desktop / non-mobile: no tg:// logic, open normal https://t.me link
+    if (!isAndroid()) {
+      return; // Allow default link behavior (opens target="_blank")
     }
 
     // Inside In-App Browser (Instagram, FBAN, FBAV, TikTok, Snapchat):
     // Skip tg:// attempt and open plain https://t.me link, show dismissible top bar
     if (isInAppBrowser()) {
       showInAppBrowserNotice();
-      return; // allow default link behavior (opens target="_blank")
+      return; // Allow default link behavior (opens target="_blank")
     }
 
-    // Regular Mobile Browser (iOS Safari, Android Chrome, etc.): Enhance with deep link
+    // 2) Keep the tg:// + 1500 ms visibility fallback logic on Android only:
     e.preventDefault();
 
     // Ignore taps while check is in progress
@@ -433,7 +457,12 @@
     const ctaButtons = document.querySelectorAll('a[data-cta-location]');
     ctaButtons.forEach(btn => {
       const loc = btn.getAttribute('data-cta-location') || 'unknown';
-      const type = btn.getAttribute('data-cta-type') || (loc.includes('support') ? 'support' : 'group');
+      const explicitType = btn.getAttribute('data-cta-type');
+      const href = btn.getAttribute('href') || '';
+      const type = explicitType || (
+        (href.includes('support') || href.includes(TELEGRAM_SUPPORT_USERNAME)) ? 'support' :
+        (loc.includes('support') ? 'support' : 'group')
+      );
       const fallbackUrl = (type === 'support')
         ? (config.telegramSupportUrl || `https://t.me/${TELEGRAM_SUPPORT_USERNAME}`)
         : (config.telegramGroupUrl || `https://t.me/+${TELEGRAM_GROUP_INVITE}`);
@@ -1215,11 +1244,11 @@
   // --------------------------------------------------------------------------
   function setupTelegramDownloadLinks() {
     const downloadUrl = getStoreUrl();
-    const links = document.querySelectorAll('.telegram-download-link');
-    links.forEach(link => {
-      link.setAttribute('href', downloadUrl);
-      link.setAttribute('target', '_blank');
-      link.setAttribute('rel', 'noopener noreferrer');
+    const elements = document.querySelectorAll('.telegram-download-link, .btn-store-secondary, [data-store-btn], [data-store-link]');
+    elements.forEach(el => {
+      el.setAttribute('href', downloadUrl);
+      el.setAttribute('target', '_blank');
+      el.setAttribute('rel', 'noopener noreferrer');
     });
   }
 
